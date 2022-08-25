@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const date = require(__dirname + "/date.js");
 const app = express();
 
 app.set("view engine", "ejs");
@@ -7,27 +8,35 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-var newItems = ["Buy Food","Cook Food","Eat Food"];
+const newItems = ["Buy Food", "Cook Food", "Eat Food"];
+const workItems = [];
+
 app.get("/", function (req, res) {
-  var today = new Date();
-  var currentDay = today.getDay();
-  var options = { 
-    weekday: "long",
-    day: "numeric",
-    month: "long"
-  };
-  var day = today.toLocaleDateString("en-US", options);
-  res.render("list", { kindOfDay: day, newListItems: newItems });
-//   Sends variables and runs list.ejs in views folder
+  const day = date.getDate()
+  res.render("list", { listTitle: day, newListItems: newItems });
+  //   Sends variables and runs list.ejs in views folder
 });
 
 app.post("/", function (req, res) {
-    // submitted items in new var
-    newItem = req.body.newItem;
+  // submitted items in new var
+  const item = req.body.newItem;
+  if (req.body.list === "Work") {
     //push submited item into array
-    newItems.push(newItem);
+    workItems.push(item);
+    res.redirect("/work");
+  } else {
+    newItems.push(item);
     // redirect back to app.get home page
-    res.redirect("/")
+    res.redirect("/");
+  }
+});
+
+app.get("/work", function (req, res) {
+  res.render("list", { listTitle: "Work List", newListItems: workItems });
+});
+
+app.get("/about", function (req, res) {
+  res.render("about", { listTitle: "Work List", newListItems: workItems });
 });
 
 app.listen(process.env.PORT || 3000, function () {

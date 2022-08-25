@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>To Do List</title>
-  </head>
+  <%- include("header"); -%>
   <body>
-    <h1 style="color: purple"><%=kindOfDay%> List</h1>
-    <ul>
-        <!-- create lists of items -->
-        <%for (const item of newListItems){%>
-            <li><%=item%></li>
-        <%}%>
-    </ul>
-    <form action="/" method="post">
-        <label for="">New Item</label>
-        <input type="text" name="newItem">
-        <button type="submit">Add</button>
-    </form>
-  </body>
-</html>
+    <div class="box" id="heading">
+      <h1><%=listTitle%></h1>
+    </div>
+
+    <div class="box">
+      <!-- create lists of items -->
+      <%for (const item of newListItems){%>
+      <div class="item">
+        <input type="checkbox" name="" id="" />
+        <p><%=item%></p>
+      </div>
+      <%}%>
+      <form action="/" method="post">
+        <input type="text" name="newItem" placeholder="New item" autocomplete="off"/>
+        <button type="submit" value=<%= listTitle%> name="list">+</button>
+      </form>
+    </div>
+    <%- include("footer"); -%>
+
