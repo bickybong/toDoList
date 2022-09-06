@@ -10,7 +10,7 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //item schema
-mongoose.connect("mongodb://localhost:27017/todolistDB");
+mongoose.connect("mongodb+srv://bickybong:test123@cluster0.bnspu6g.mongodb.net/todolistDB");
 const itemsSchema = {
   name: String,
 };
@@ -30,6 +30,7 @@ const item3 = new Item({
 const defaultItems = [item1, item2, item3];
 
 const listSchema = {
+  //lists for other urls
   name: String,
   items: [itemsSchema],
 };
@@ -39,6 +40,7 @@ const List = mongoose.model("List", listSchema);
 app.get("/", function (req, res) {
   Item.find(function (err, items) {
     if (items.length === 0) {
+      //check for first time loading to put in items
       Item.insertMany(defaultItems, function (err) {
         if (err) {
           console.log(err);
@@ -48,13 +50,14 @@ app.get("/", function (req, res) {
       });
       res.redirect("/");
     } else {
+      //render itemslist
       res.render("list", { listTitle: "Today", newListItems: items });
     }
   });
   //   Sends variables and runs list.ejs in views folder
 });
 
-app.get("/:customeListName", function (req, res) {
+app.get("/:customeListName", function (req, res) {//custom Urls
   const customeListName = _.capitalize(req.params.customeListName);
   List.findOne({ name: customeListName }, function (err, foundList) {
     if (!err) {
@@ -88,8 +91,9 @@ app.post("/", function (req, res) {
     itemNew.save();
     //redirect to home route to update
     res.redirect("/");
-  } else {
+  } else {//custome URL add items
     List.findOne({ name: listName }, function (err, foundList) {
+      console.log(foundList);
       foundList.items.push(itemNew);
       foundList.save();
       res.redirect("/" + listName);
@@ -97,7 +101,7 @@ app.post("/", function (req, res) {
   }
 });
 
-app.post("/delete", function (req, res) {
+app.post("/delete", function (req, res) {//delete items with checkbox
   const checkedId = req.body.checkbox;
   const listName = req.body.listName;
   if (listName === "Today") {
@@ -109,7 +113,7 @@ app.post("/delete", function (req, res) {
       }
     });
     res.redirect("/");
-  } else {
+  } else {//custom url delete
     List.findOneAndUpdate(
       { name: listName },
       { $pull: { items: { _id: checkedId } } },
