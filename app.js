@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //item schema
 mongoose.connect("mongodb+srv://bickybong:test123@cluster0.bnspu6g.mongodb.net/todolistDB");
-const itemsSchema = {
+const itemsSchema = { 
   name: String,
 };
 //model
